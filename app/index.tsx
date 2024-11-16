@@ -4,6 +4,7 @@ import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
 import wereCooked from './error';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 
@@ -37,7 +38,7 @@ export default function Index() {
   }, []);
 
   if (!location.enabled) {
-    return <wereCooked></wereCooked>;
+    return <WereCooked />;
   }
 
   return (

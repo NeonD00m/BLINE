@@ -5,7 +5,7 @@ import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 
-export default function wereCooked() {
+export default function WereCooked() {
   return (
     <View style={styles.outerContainer}>
         <Text>You're on your own man, I hope you have a real map.</Text>
