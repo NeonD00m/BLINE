@@ -51,6 +51,24 @@ export default function Index() {
           googleMapId="MAIN_MAP_UNIQUE_ID"
           showsTraffic
         />
+
+    <View style={styles.searchContainer}>
+      <GooglePlacesAutocomplete
+        placeholder="Search"
+        onPress={(data, details = null) => {
+          console.log(data, details);
+        }}
+        query={{
+          key: 'YOUR_GOOGLE_PLACES_API_KEY',
+          language: 'en',
+        }}
+        styles={{
+          textInput: styles.searchBar,
+          listView: styles.listView,
+        }}
+        fetchDetails={true}
+      />
+    </View>
       </SafeAreaView>
     </View>
   );
@@ -65,6 +83,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  searchBar: {
+    height: 50,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    fontSize: 18,
   },
   map: {
     flex: 1,
