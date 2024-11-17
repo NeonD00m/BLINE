@@ -6,7 +6,7 @@
 """
 
 from flask import Flask, request
-import math
+from geopy.distance import geodesic
 
 # pasth-fiding specific packages
 import osmnx as ox
@@ -22,22 +22,18 @@ def search():
     try:
         locn = eval(locn)
         dest = eval(dest)
-
     except:
         return {"error": "invalid inputs for dest or locn"}
 
-    straight_dist = straight_line_dist(locn, dest)
+    # print(straight_dist)
 
     path_algo(locn, dest)
-    return f"{locn}, {dest}, {type(locn)}, {straight_dist}"
 
-def straight_line_dist(locn, dest):
-    distance = haversine(locn[0], locn[1], dest[0], dest[1])
-    print(distance)
-    return distance
+    return f"{locn}, {dest}, {type(locn)}, {straight_dist}"
 
 def path_algo(user_locn, dest):
 
+    straight_dist = geodesic(locn, dest).kilometers * 1000 # in meters
     graph = ox.graph_from_point(center_point=user_locn, dist=10000, simplify=False)
     #graph = ox.convert_to_undirected(graph)
     #graph = ox.consolidate_intersections(graph, 5.7, True, True, True)
@@ -135,7 +131,6 @@ def path_algo(user_locn, dest):
 
     #print(node_coordinates)
 
-
     #fig, ax = plt.subplots(figsize=(10, 10))
 
     #ox.plot_graph(graph, ax=ax, node_size=0, bgcolor='w')
@@ -144,3 +139,13 @@ def path_algo(user_locn, dest):
     #ox.plot_graph_route(graph, shortest_path_nodes, route_linewidth=4, route_color='r', ax=ax)
 
     #plt.show()
+
+    return node_coordinates
+
+def return_polyline(node_coordinates):
+
+    return polyline
+
+
+straight_dist = geodesic(locn, dest).kilometers * 1000 # in meters
+print(straight_dist)
