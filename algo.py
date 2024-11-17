@@ -10,6 +10,18 @@ graph = ox.graph_from_point(center_point=coords, dist=10000,simplify=False)
 #graph = ox.convert_to_undirected(graph)
 #graph = ox.consolidate_intersections(graph, 5.7, True, True, True)
 
+traffic_light_nodes = [
+    node for node, data in graph.nodes(data=True)
+    if data.get('highway') == 'traffic_signals'
+]
+
+traffic_light_edges = [
+    node for node, data in graph.edges(data=True)
+    if data.get('highway') == 'traffic_signals'
+]
+
+
+
 #graph.graph["simplified"] = False
 #s_graph = ox.simplify_graph(G=graph, edge_attrs_differ=None, remove_rings=False, track_merged=False)
 #fig, ax = ox.plot_graph(graph)
@@ -24,6 +36,7 @@ for node in shortest_path_nodes:
     node_coordinates.append([node_data['x'], node_data['y']])
 
 print(node_coordinates)
+
 
 #fig, ax = plt.subplots(figsize=(10, 10))
 
