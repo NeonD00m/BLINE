@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
-  Image,
+  // Image,
 } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -15,6 +15,8 @@ import WereCooked from './error';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { fetchAutocomplete, fetchPlaceDetails, getDirections } from './api'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 const TEST_DRIVE_VIEW = false;
@@ -22,7 +24,8 @@ const TEST_UPDATE_PATH = false;
 const PATH_UPDATE_INTERVAL = 5 * 1000;
 
 export default function Index() {
-  const [eta, setETA] = useState({hours: 0, minutes: 0});
+  const [showingLoading, showLoading] = useState(false);
+  const [eta, setETA] = useState({ hours: 0, minutes: 0 });
   const [routeDistance, setRouteDistance] = useState(0);
   const textInputRef = useRef(null);
   const [routeCoords, setRouteCoords] = useState([]);
@@ -60,7 +63,7 @@ export default function Index() {
       if (TEST_UPDATE_PATH) { console.log("GETTING PATH UPDATE"); return; }
 
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') { return; }
+      if (status !== 'granted') { console.log('NOT GRANTED'); return; }
 
       let { coords } = await Location.getCurrentPositionAsync({});
       const currentLocation = {
@@ -89,12 +92,33 @@ export default function Index() {
     return () => clearInterval(intervalId);
   }, [destination, searchBarPosition]);
 
-  const enterLocation = () => {
+  const enterLocation = async (lat, lng) => {
     if (textInputRef.current) {
       textInputRef.current.blur();
     }
     setSearchBarPosition('top');
     setSuggestions([]);
+
+    showLoading(true);
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    console.log("SHOWING LOADING")
+    const coords = await getDirections(location.latitude, location.longitude, lat, lng);
+    setRouteCoords(coords);
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    console.log("HIDING LOADING")
+    showLoading(false);
   }
 
   const exitLocation = () => {
@@ -105,10 +129,8 @@ export default function Index() {
   const handleEnterPress = async () => {
     if (searchText.trim() == '') { return; }
     if (destination && !TEST_DRIVE_VIEW) {
-      const coords = await getDirections(location.latitude, location.longitude, destination.latitude, destination.longitude);
-      setRouteCoords(coords);
+      enterLocation(destination.latitude, destination.longitude);
     }
-    enterLocation();
   };
 
   // const fetchAutocomplete = async (input: string | number | boolean) => {
@@ -197,10 +219,7 @@ export default function Index() {
       const { lat, lng } = placeDetails.geometry.location;
       setSearchText(item.description);
       setDestination({ latitude: lat, longitude: lng });
-      enterLocation();
-
-      const coords = await getDirections(location.latitude, location.longitude, lat, lng);
-      setRouteCoords(coords);
+      enterLocation(lat, lng);
     }
   };
 
@@ -302,6 +321,11 @@ export default function Index() {
             )}
           </View>
 
+          {showingLoading && <Image
+            style={styles.loading}
+            source={require('../assets/loading.gif')}
+          />}
+
           {searchBarPosition === 'bottom' ? null : (
             <View style={[styles.floatContainer, styles.driveContainer]}>
               {/* <View style={styles.infoContainer}> */}
@@ -333,10 +357,16 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   cornerLogo: {
-    top: -30 || -1 * useSafeAreaInsets().top,
+    top: -30,// || -1 * useSafeAreaInsets().top,
     position: 'absolute',
     width: 100,
     height: 100,
+    resizeMode: 'contain',
+  },
+  loading: {
+    position: `absolute`,
+    width: 180,
+    height: 140,
     resizeMode: 'contain',
   },
   outerContainer: {
@@ -346,7 +376,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   floatContainer: {
     position: 'absolute',
