@@ -55,7 +55,7 @@ def path_algo(user_locn, dest):
 
     first_path = nx.shortest_path(graph, starting, ending, 'length')
 
-    print("iterating through node old coords...")
+    print("iterating through old node coords..")
     node_coordinates_old = []
     for node in first_path:
         node_data = graph.nodes[node]
@@ -63,6 +63,7 @@ def path_algo(user_locn, dest):
 
     traffic = []
 
+    print("iterating through node ids...")
     for omid in first_path:
         if(graph.nodes[omid].get('highway') == 'traffic_signals'):
             traffic.append(omid)
@@ -73,6 +74,7 @@ def path_algo(user_locn, dest):
 
     refined_path = nx.shortest_path(graph, starting, ending, 'length')
 
+    print("refining path...")
     node_coordinates_refined = []
     for node in refined_path:
         node_data = graph.nodes[node]
