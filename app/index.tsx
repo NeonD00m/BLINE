@@ -16,7 +16,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { fetchAutocomplete, fetchPlaceDetails, getDirections } from './api'
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
-const GOOGLE_PLACES_API_KEY = 'AIzaSyDW22PGs1KSQEpLk7AOgPFREaUhaOCkqag';
+const TEST_DRIVE_VIEW = false;
 
 export default function Index() {
   const textInputRef = useRef(null);
@@ -56,11 +56,11 @@ export default function Index() {
   }
 
   const handleEnterPress = async () => {
-    if (destination) {
+    if (destination && !TEST_DRIVE_VIEW) {
       const coords = await getDirections(location.latitude, location.longitude, destination.latitude, destination.longitude);
       setRouteCoords(coords);
-      enterLocation();
     }
+    enterLocation();
   };
 
   // const fetchAutocomplete = async (input: string | number | boolean) => {
@@ -84,6 +84,7 @@ export default function Index() {
   // };
 
   useEffect(() => {
+    if (TEST_DRIVE_VIEW) { return; }
     let isCancelled = false;
     if (searchText.length > 2) {
       fetchAutocomplete(searchText).then((results) => {
@@ -214,13 +215,7 @@ export default function Index() {
             )}
           </MapView>
 
-          <View style={dynamicStyles.searchContainer}>
-            {/* <TextInput
-              style={styles.searchBar}
-              placeholder="Search"
-              value={searchText}
-              onChangeText={setSearchText}
-            /> */}
+          <View style={[styles.floatContainer, dynamicStyles.searchContainer]}>
             <View style={styles.searchBar}>
               <TextInput
                 style={styles.searchBar}
@@ -235,8 +230,6 @@ export default function Index() {
                 ref={textInputRef}
               />
               <TouchableOpacity onPress={handleEnterPress} style={styles.searchIcon}>
-                {/* <Icon name="search" size={20} color="#000" /> */}
-                {/* <FontAwesome name="search" size={24} color="black" /> */}
                 <AntDesign name="search1" size={24} color="black" />
               </TouchableOpacity>
             </View>
@@ -257,6 +250,26 @@ export default function Index() {
               />
             )}
           </View>
+
+          {searchBarPosition === 'bottom' ? null : (
+            <View style={[styles.floatContainer, styles.driveContainer]}>
+              {/* <View style={styles.infoContainer}> */}
+              <Text style={styles.firstLevelText}>
+                6 mins
+              </Text>
+              <Text style={styles.separator}>•</Text>
+              <Text style={styles.secondLevelText}>
+                00:00
+              </Text>
+              <Text style={styles.separator}>•</Text>
+              {/* </View>
+              <View style={styles.infoContainer}> */}
+              <Text style={styles.firstLevelText}>
+                2 mi.
+              </Text>
+              {/* </View> */}
+            </View>
+          )}
         </SafeAreaView>
       </View>
     );
@@ -277,16 +290,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  searchContainer: {
+  floatContainer: {
     position: 'absolute',
-    bottom: 50,
     width: '90%',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignContent: 'center',
     zIndex: 1,
+    backgroundColor: '#FFFFFF',
     borderColor: "#000000",
     borderWidth: 1,
+  },
+  driveContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    bottom: 50,
+  },
+  separator: {
+    paddingHorizontal: 10,
+    fontSize: 20,
+  },
+  infoContainerLeft: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  infoContainerRight: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  firstLevelText: {
+    fontSize: 32,
+    fontWeight: 600,
+  },
+  secondLevelText: {
+    fontSize: 20,
+    fontWeight: 400,
+  },
+
+  searchContainer: {
+    // position: 'absolute',
+    bottom: 50,
+    // width: '90%',
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // alignContent: 'center',
+    // zIndex: 5,
+    // borderColor: "#000000",
+    // borderWidth: 1,
   },
   searchBarContainer: {
     flexDirection: 'row',
