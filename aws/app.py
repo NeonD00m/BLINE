@@ -7,6 +7,7 @@
 
 from flask import Flask, request, jsonify
 from geopy.distance import geodesic
+from flask_sqlalchemy import SQLAlchemy
 
 # pasth-fiding specific packages
 import osmnx as ox
@@ -17,27 +18,36 @@ app = Flask(__name__)
 # ---------------------------------------------------------------------------- #
 @app.route('/search')
 def search():
-    locn = request.args.get('locn', default=1, type=int)
-    dest = request.args.get('dest', default=1, type=int)
-    print(locn, dest)
+    locn_str = request.args.get('locn').strip('"')
+    dest_str = request.args.get('dest').strip('"')
+    print(locn_str, dest_str)
     try:
-        locn = eval(locn)
-        dest = eval(dest)
+        locn_list = locn_str.split(",")
+        dest_list = dest_str.split(",")
+
+        locn = (float(locn_list[0]), float(locn_list[1]))
+        dest =(float(dest_list[0]), float(dest_list[1]))
     except:
         return {"error": "invalid inputs for dest or locn"}
 
-    # print(straight_dist)
+    print("tuple:", type(locn), locn, dest)
 
-    route_waypoint_coords = path_algo(locn, dest)
-
-    return jsonify({"coord_pairs", route_waypoint_coords})
+    try:
+        route_waypoint_coords = path_algo(locn, dest)
+        return jsonify({"coord_pairs": route_waypoint_coords})
+    except:
+        return {"error": "function timed out"}
 
 # ---------------------------------------------------------------------------- #
 def path_algo(user_locn, dest):
 
     print(user_locn)
-    straight_dist = geodesic(locn, dest).kilometers * 1000 # in meters
-    graph = ox.graph_from_point(center_point=user_locn, dist=straight_dist+1000,simplify=False)
+    straight_dist = (geodesic(user_locn, dest).kilometers * 1000) + 1000 # in meters
+
+    try:
+        graph = ox.graph_from_point(center_point=user_locn, dist=straight_dist,simplify=False)
+    except:
+	       return {"error": "failed to generate graph from given coordinates"}
 
     starting = ox.nearest_nodes(graph, user_locn[1], user_locn[0])
     ending = ox.nearest_nodes(graph, dest[1], dest[0])
