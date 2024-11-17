@@ -13,6 +13,7 @@ import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context
 import WereCooked from './error';
 import polyline from '@mapbox/polyline';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { fetchAutocomplete, fetchPlaceDetails, getDirections } from './api'
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 const GOOGLE_PLACES_API_KEY = 'AIzaSyDW22PGs1KSQEpLk7AOgPFREaUhaOCkqag';
@@ -56,30 +57,31 @@ export default function Index() {
 
   const handleEnterPress = async () => {
     if (destination) {
-      await getDirections(location.latitude, location.longitude, destination.latitude, destination.longitude);
-    }
-    enterLocation();
-  };
-
-  const fetchAutocomplete = async (input: string | number | boolean) => {
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-      input
-    )}&key=${GOOGLE_PLACES_API_KEY}&types=geocode`;
-
-    try {
-      const result = await fetch(apiUrl);
-      const json = await result.json();
-      console.log(json); // Log the API response
-      if (json.predictions) {
-        return json.predictions;
-      } else {
-        return [];
-      }
-    } catch (err) {
-      console.error(err);
-      return [];
+      const coords = await getDirections(location.latitude, location.longitude, destination.latitude, destination.longitude);
+      setRouteCoords(coords);
+      enterLocation();
     }
   };
+
+  // const fetchAutocomplete = async (input: string | number | boolean) => {
+  //   const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+  //     input
+  //   )}&key=${GOOGLE_PLACES_API_KEY}&types=geocode`;
+
+  //   try {
+  //     const result = await fetch(apiUrl);
+  //     const json = await result.json();
+  //     console.log(json); // Log the API response
+  //     if (json.predictions) {
+  //       return json.predictions;
+  //     } else {
+  //       return [];
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     return [];
+  //   }
+  // };
 
   useEffect(() => {
     let isCancelled = false;
@@ -97,48 +99,48 @@ export default function Index() {
     };
   }, [searchText]);
 
-  const fetchPlaceDetails = async (placeId: any) => {
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`;
+  // const fetchPlaceDetails = async (placeId: any) => {
+  //   const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`;
 
-    try {
-      const result = await fetch(apiUrl);
-      const json = await result.json();
-      if (json.result) {
-        return json.result;
-      } else {
-        return null;
-      }
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
+  //   try {
+  //     const result = await fetch(apiUrl);
+  //     const json = await result.json();
+  //     if (json.result) {
+  //       return json.result;
+  //     } else {
+  //       return null;
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     return null;
+  //   }
+  // };
 
-  const getDirections = async (originLat: any, originLng: any, destLat: any, destLng: any) => {
-    try {
-      const resp = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${originLat},${originLng}&mode=driving%20MA&destination=${destLat},${destLng}&key=${GOOGLE_PLACES_API_KEY}`
-      );
-      const respJson = await resp.json();
-      if (respJson.routes.length && mapRef.current != null) {
-        const points = polyline.decode(
-          respJson.routes[0].overview_polyline.points
-        );
-        const coords = points.map((point: any[]) => ({
-          latitude: point[0],
-          longitude: point[1],
-        }));
-        setRouteCoords(coords);
+  // const getDirections = async (originLat: any, originLng: any, destLat: any, destLng: any) => {
+  //   try {
+  //     const resp = await fetch(
+  //       `https://maps.googleapis.com/maps/api/directions/json?origin=${originLat},${originLng}&mode=driving%20MA&destination=${destLat},${destLng}&key=${GOOGLE_PLACES_API_KEY}`
+  //     );
+  //     const respJson = await resp.json();
+  //     if (respJson.routes.length && mapRef.current != null) {
+  //       const points = polyline.decode(
+  //         respJson.routes[0].overview_polyline.points
+  //       );
+  //       const coords = points.map((point: any[]) => ({
+  //         latitude: point[0],
+  //         longitude: point[1],
+  //       }));
+  //       setRouteCoords(coords);
 
-        // mapRef.current.fitToCoordinates(coords, {
-        //   edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-        //   animated: true,
-        // });
-      }
-    } catch (error) {
-      console.error('Error fetching directions:', error);
-    }
-  };
+  //       // mapRef.current.fitToCoordinates(coords, {
+  //       //   edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+  //       //   animated: true,
+  //       // });
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching directions:', error);
+  //   }
+  // };
 
   const handleSuggestionPress = async (item: { place_id: any; description: any; }) => {
     const placeDetails = await fetchPlaceDetails(item.place_id);
@@ -146,16 +148,10 @@ export default function Index() {
       const { lat, lng } = placeDetails.geometry.location;
       setSearchText(item.description);
       setDestination({ latitude: lat, longitude: lng });
-      getDirections(location.latitude, location.longitude, lat, lng);
       enterLocation();
-      // const camera = {
-      //   center: location,
-      //   pitch: 45,        // Tilt the camera
-      //   heading: 90,      // Rotate the camera
-      //   altitude: 500,    // Change the camera's altitude
-      //   zoom: 17,         // Set the zoom level
-      // };
-      // mapRef.current.animateCamera(camera, { duration: 1000, });  // Animate over 1 second
+
+      const coords = await getDirections(location.latitude, location.longitude, lat, lng);
+      setRouteCoords(coords);
     }
   };
 
@@ -247,7 +243,7 @@ export default function Index() {
             {suggestions.length > 0 && (
               <FlatList
                 data={suggestions}
-                keyExtractor={(item: { place_id: any; }) => item.place_id}
+                keyExtractor={(item: any) => item.place_id}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.suggestionItem}
