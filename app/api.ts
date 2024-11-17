@@ -39,8 +39,11 @@ export const fetchPlaceDetails = async (placeId: any) => {
 
 export const getDirections = async (originLat, originLng, destLat, destLng) => {
   try {
+    // const resp = await fetch(
+    //  `https://maps.googleapis.com/maps/api/directions/json?origin=${originLat},${originLng}&destination=${destLat},${destLng}&key=${GOOGLE_PLACES_API_KEY}`
+    // );
     const resp = await fetch(
-      `https://maps.googleapis.com/maps/api/directions/json?origin=${originLat},${originLng}&destination=${destLat},${destLng}&key=${GOOGLE_PLACES_API_KEY}`
+      `http://ec2-98-81-216-61.compute-1.amazonaws.com:5000/search?locn=(${originLat},${originLng})&dest=(${destLat}, ${destLng})`
     );
     const respJson = await resp.json();
     if (respJson.routes.length) {
