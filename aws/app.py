@@ -34,6 +34,7 @@ def search():
 
     try:
         route_waypoint_coords = path_algo(locn, dest)
+        print("OUTPUTTING, FUNCTION IS FINISHED:")
         print(route_waypoint_coords)
         return jsonify({"coord_pairs": route_waypoint_coords})
     except:
@@ -65,7 +66,7 @@ def path_algo(user_locn, dest):
 
     print("iterating through node ids...")
     for omid in first_path:
-        if(graph.nodes[omid].get('highway') == 'traffic_signals'):
+        if (graph.nodes[omid].get('highway') == 'traffic_signals'):
             traffic.append(omid)
     for edge in graph.edges(data=True):
         for omid in traffic:
@@ -80,4 +81,5 @@ def path_algo(user_locn, dest):
         node_data = graph.nodes[node]
         node_coordinates_refined.append([node_data['x'], node_data['y']])
 
+    print(node_coordinates_refined)
     return node_coordinates_refined
