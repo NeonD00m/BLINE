@@ -19,6 +19,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 const TEST_DRIVE_VIEW = false;
+const TEST_UPDATE_PATH = true;
+const PATH_UPDATE_INTERVAL = 5 * 1000;
 
 export default function Index() {
   const textInputRef = useRef(null);
@@ -49,6 +51,42 @@ export default function Index() {
     },
   });
 
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      if (searchBarPosition === 'bottom') { return; }
+
+      if (TEST_UPDATE_PATH) { console.log("GETTING PATH UPDATE"); return; }
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') { return; }
+
+      let { coords } = await Location.getCurrentPositionAsync({});
+      const currentLocation = {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      };
+
+      if (lastLocation.current.latitude !== currentLocation.latitude ||
+        lastLocation.current.longitude !== currentLocation.longitude) {
+        if (destination) {
+          const coords = await getDirections(
+            currentLocation.latitude,
+            currentLocation.longitude,
+            destination.latitude,
+            destination.longitude
+          );
+          setRouteCoords(coords);
+        }
+        lastLocation.current = currentLocation;
+        setLocation((prevLocation) => ({
+          ...prevLocation,
+          ...currentLocation,
+        }));
+      }
+    }, PATH_UPDATE_INTERVAL);
+    return () => clearInterval(intervalId);
+  }, [destination, searchBarPosition]);
+
   const enterLocation = () => {
     if (textInputRef.current) {
       textInputRef.current.blur();
@@ -57,7 +95,13 @@ export default function Index() {
     setSuggestions([]);
   }
 
+  const exitLocation = () => {
+    setSearchBarPosition('bottom');
+    setRouteCoords([]);
+  }
+
   const handleEnterPress = async () => {
+    if (searchText.trim() == '') { return; }
     if (destination && !TEST_DRIVE_VIEW) {
       const coords = await getDirections(location.latitude, location.longitude, destination.latitude, destination.longitude);
       setRouteCoords(coords);
@@ -227,7 +271,7 @@ export default function Index() {
                 placeholder="Search"
                 value={searchText}
                 onChangeText={(text) => {
-                  setSearchBarPosition('bottom');
+                  exitLocation();
                   setSearchText(text);
                 }}
                 onSubmitEditing={handleEnterPress}
