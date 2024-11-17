@@ -1,22 +1,29 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
+// import DinoGame from 'react-chrome-dino-ts'
+// import 'react-chrome-dino-ts/index.css'
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 
 export default function WereCooked() {
   return (
     <View style={styles.outerContainer}>
-        <Text>You're on your own man, I hope you have a real map.</Text>
+        <Text style={styles.bigText}>You're on your own man, I hope you have a real map.</Text>
         {/* <ChromeDinoGame /> */}
+        {/* <DinoGame /> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  bigText: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
   outerContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center'
   },

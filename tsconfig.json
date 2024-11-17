@@ -13,6 +13,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    // "app/@mapbox__polyline.d.ts",
+    // "app/react-chrome-dino.d.ts",
   ]
 }
