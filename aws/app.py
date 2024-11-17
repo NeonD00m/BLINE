@@ -34,6 +34,7 @@ def search():
 
     try:
         route_waypoint_coords = path_algo(locn, dest)
+        print(route_waypoint_coords)
         return jsonify({"coord_pairs": route_waypoint_coords})
     except:
         return {"error": "function timed out"}
