@@ -3,8 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
-import wereCooked from './error';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import WereCooked from './error';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 
@@ -16,13 +16,12 @@ export default function Index() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421
   });
-  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        // setErrorMsg('Permission to access location was denied');
         return;
       }
 
@@ -52,7 +51,7 @@ export default function Index() {
           showsTraffic
         />
 
-    <View style={styles.searchContainer}>
+    <View style={styles.searchBar}>
       <GooglePlacesAutocomplete
         placeholder="Search"
         onPress={(data, details = null) => {
@@ -90,6 +89,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 20,
     fontSize: 18,
+  },
+  listView: {
+    backgroundColor: "#FFFFFF",
   },
   map: {
     flex: 1,
