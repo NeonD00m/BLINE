@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
-// import ChromeDinoGame from 'react-chrome-dino';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 
