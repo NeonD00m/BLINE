@@ -7,6 +7,7 @@ import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context
 import WereCooked from './error';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
+const GOOGLE_PLACES_API_KEY = 'AIzaSyDW22PGs1KSQEpLk7AOgPFREaUhaOCkqag';
 
 export default function Index() {
   const [location, setLocation] = useState({
@@ -51,8 +52,8 @@ export default function Index() {
           showsTraffic
         />
 
-    <View style={styles.searchBar}>
-      {/* <GooglePlacesAutocomplete
+    {/* <View style={styles.searchBar}>
+      <GooglePlacesAutocomplete
         placeholder="Search"
         onPress={(data, details = null) => {
           console.log(data, details);
@@ -66,8 +67,8 @@ export default function Index() {
           listView: styles.listView,
         }}
         fetchDetails={true}
-      /> */}
-    </View>
+      />
+    </View> */}
       </SafeAreaView>
     </View>
   );
