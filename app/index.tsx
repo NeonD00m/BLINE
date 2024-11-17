@@ -12,17 +12,18 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
 import WereCooked from './error';
-import polyline from '@mapbox/polyline';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { fetchAutocomplete, fetchPlaceDetails, getDirections } from './api'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 const TEST_DRIVE_VIEW = false;
-const TEST_UPDATE_PATH = true;
+const TEST_UPDATE_PATH = false;
 const PATH_UPDATE_INTERVAL = 5 * 1000;
 
 export default function Index() {
+  const [eta, setETA] = useState({hours: 0, minutes: 0});
+  const [routeDistance, setRouteDistance] = useState(0);
   const textInputRef = useRef(null);
   const [routeCoords, setRouteCoords] = useState([]);
   const [destination, setDestination] = useState(null);
@@ -46,8 +47,9 @@ export default function Index() {
       zIndex: 1,
       borderColor: "#000000",
       borderWidth: 1,
-      top: searchBarPosition === 'top' ? 50 : undefined,
+      top: searchBarPosition === 'top' ? 60 : undefined,
       bottom: searchBarPosition === 'bottom' ? 50 : undefined,
+      opacity: searchBarPosition === 'top' && textInputRef.current && !textInputRef.current.isFocused() ? 0.5 : 1,
     },
   });
 
@@ -282,7 +284,7 @@ export default function Index() {
                 <AntDesign name="search1" size={24} color="black" />
               </TouchableOpacity>
             </View>
-            {suggestions.length > 0 && (
+            {suggestions.length > 0 && searchBarPosition === 'bottom' && (
               <FlatList
                 data={suggestions}
                 keyExtractor={(item: any) => item.place_id}
@@ -304,17 +306,17 @@ export default function Index() {
             <View style={[styles.floatContainer, styles.driveContainer]}>
               {/* <View style={styles.infoContainer}> */}
               <Text style={styles.firstLevelText}>
-                6 mins
+                {"6 mins"}
               </Text>
               <Text style={styles.separator}>•</Text>
               <Text style={styles.secondLevelText}>
-                00:00
+                {"00:00" /*`${String(eta.hours).padStart(2, '0')}:${String(eta.minutes).padStart(2, '0')}`*/}
               </Text>
               <Text style={styles.separator}>•</Text>
               {/* </View>
               <View style={styles.infoContainer}> */}
               <Text style={styles.firstLevelText}>
-                2 mi.
+                {"2 mi."}
               </Text>
               {/* </View> */}
             </View>
@@ -411,7 +413,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
     borderRadius: 5,
     paddingHorizontal: 16,
     fontSize: 18,
