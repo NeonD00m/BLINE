@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 import { SafeAreaView as SafeAreaViewREAL } from 'react-native-safe-area-context';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+// import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import WereCooked from './error';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
@@ -52,13 +52,13 @@ export default function Index() {
         />
 
     <View style={styles.searchBar}>
-      <GooglePlacesAutocomplete
+      {/* <GooglePlacesAutocomplete
         placeholder="Search"
         onPress={(data, details = null) => {
           console.log(data, details);
         }}
         query={{
-          key: 'YOUR_GOOGLE_PLACES_API_KEY',
+          key: 'AIzaSyDW22PGs1KSQEpLk7AOgPFREaUhaOCkqag',
           language: 'en',
         }}
         styles={{
@@ -66,7 +66,7 @@ export default function Index() {
           listView: styles.listView,
         }}
         fetchDetails={true}
-      />
+      /> */}
     </View>
       </SafeAreaView>
     </View>
