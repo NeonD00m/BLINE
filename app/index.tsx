@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
+  Image,
 } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -14,6 +15,7 @@ import WereCooked from './error';
 import polyline from '@mapbox/polyline';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { fetchAutocomplete, fetchPlaceDetails, getDirections } from './api'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SafeAreaView = true ? View : SafeAreaViewREAL;
 const TEST_DRIVE_VIEW = false;
@@ -214,7 +216,10 @@ export default function Index() {
               <Polyline coordinates={routeCoords} strokeWidth={4} strokeColor="red" />
             )}
           </MapView>
-
+          <Image
+            style={styles.cornerLogo}
+            source={require('../assets/splash.png')}
+          />
           <View style={[styles.floatContainer, dynamicStyles.searchContainer]}>
             <View style={styles.searchBar}>
               <TextInput
@@ -281,6 +286,13 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
+  cornerLogo: {
+    top: -30 || -1 * useSafeAreaInsets().top,
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
   outerContainer: {
     flex: 1,
     backgroundColor: '#000000'

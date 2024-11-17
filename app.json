@@ -22,6 +22,9 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "splash": {
+      "image": "./assets/splash.png"
+    },
     "plugins": [
       "expo-router",
       [
