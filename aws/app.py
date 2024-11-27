@@ -2,7 +2,7 @@
 """
     Description: Our simple flask API with proprietary algorithm that calculates
     optimal route for emergency vehicles and returns it
-    Creators: Team Beline for Inrix x AWS ACM hackathon 2024
+    Creators: Team Bline for Inrix x AWS ACM hackathon 2024
 """
 
 from flask import Flask, request, jsonify
